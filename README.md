@@ -9,7 +9,7 @@ Gürültü Kirliliği Yok (Noise Reduction): Binlerce satır yerine sadece kriti
 
 Tam Otomatik (Fully Automated): Manuel hiçbir müdahale gerektirmez. / Requires no manual intervention.
 
-
+<img width="1365" height="784" alt="Akıs" src="https://github.com/user-attachments/assets/07512254-623b-4ee3-8b9b-3d759ab46b89" />
 
 
 Teknik Gereksinimler & Kurulum | Technical Prerequisites & Setup
@@ -25,6 +25,17 @@ API / Permission Name: Mail.Send
 Type: Application (Send mail as any user)
 
 Admin Consent: Gerekli / Required
+<img width="1368" height="768" alt="API_permissions" src="https://github.com/user-attachments/assets/76e6bd28-4036-4ad5-aa4e-191f67b32fe2" />
+Yapılandırma Detayları / Configuration Details:
+
+Application Name: GenericEventLogMailApp (Örn: EventLogMail)
+
+API / Permission Name: Mail.Send
+
+Type: Application
+
+Admin Consent Status: Granted for <YOUR_ORGANIZATION> (Örn: Granted for Anadolu Isuzu)
+
 
 
 2. Ağ Paylaşımı & Klasör Yetkileri | Shared Folder & Permissions
@@ -36,6 +47,23 @@ Shared Folder Path: \\<YOUR_SERVER_NAME>\<YOUR_SHARE_NAME>$
 Share Permissions: Everyone veya Domain Computers için Full Control.
 
 Security (NTFS) Permissions: Domain Computers grubu için Modify, Read & Execute, List folder contents, Read, Write yetkileri tanımlanmalıdır.
+
+<img width="955" height="1120" alt="shared_folder" src="https://github.com/user-attachments/assets/c6b6da30-0686-487f-b935-b8239b67cf26" />
+
+Yapılandırma Detayları / Configuration Details:
+
+1. Share Permissions (Sol Sekme) / Left Tab:
+
+Group/User: Everyone
+
+Permission: Full Control (Allow)
+
+2. Security (NTFS) Permissions (Sağ Sekme) / Right Tab:
+
+Group/User: <YOUR_DOMAIN>\Domain Computers
+
+Permission: Modify, Read & Execute, List folder contents, Read, Write (Allow)
+
 
 
 3. Görev Zamanlayıcı Yapılandırması | Task Scheduler Configuration
@@ -51,6 +79,61 @@ Program/script: powershell.exe
 Add arguments: -ExecutionPolicy Bypass -File "C:\<PATH_TO_SCRIPT>\Central-Server-Script.ps1"
 
 Start in: C:\<WORKING_DIRECTORY>
+
+<img width="1078" height="976" alt="task_scheduler" src="https://github.com/user-attachments/assets/fb70df54-73ba-4ce8-b982-4608412fd52d" />
+
+
+Yapılandırma Detayları / Configuration Details:
+
+Task Name: Generic_Event_Log_Reporter
+
+Trigger (Tetikleyici): Daily (Günlük), Belirlenen saatte (Örn: 17:00 / 5:00 PM)
+
+Action (Eylem): Start a program
+
+Program/script: powershell.exe
+
+Add arguments: -ExecutionPolicy Bypass -File "C:\<PATH_TO_SCRIPT>\Central-Server-Script.ps1"
+
+Start in: C:\CentralEventReport
+
+
+4. Intune Remediation Yapılandırması | Intune Remediation Configuration
+
+<img width="1234" height="848" alt="ıNTUNE" src="https://github.com/user-attachments/assets/d0179682-aaae-44c7-bcd6-446dddb84b5b" />
+
+
+Yapılandırma Detayları / Configuration Details:
+
+Detection Script: Intune'un her zaman düzeltme (remediation) aşamasına geçmesini sağlayan exit 1 mantığını içerir.
+
+Remediation Script: Logları süzen ve ağ paylaşımına (\\<SERVER_IP>\Share$) gönderen ana scripttir.
+
+Run credentials: No (SYSTEM yetkisi için).
+
+64-bit PowerShell: Yes.
+
+
+
+Örnek Rapor Çıktısı | Sample Report Output
+Sistem başarıyla çalıştığında, yöneticilere ulaşan mail ve ekindeki analiz raporu şu şekilde görünmektedir:
+Mail Özeti / Email Summary:
+Konu / Subject: Client Device Critical Event Report - 1
+Kimden / From: <REPORTS_SENDER_MAIL> (Örn: reports@isuzu.com.tr)
+Kime / To: <RECIPIENT_1>; <RECIPIENT_2>; <RECIPIENT_3>
+Gönderi İçeriği / Body:
+Plaintext
+Device-based critical event analysis report is attached.
+Total Device Count: 2
+Ek / Attachment: Generic_Event_Analysis.zip [512 bytes]
+
+ZIP İçeriği (CSV) / ZIP Content (CSV):
+Görselin Sağ Tarafı / Right Side of Image: MergedEvents.csv dosyası, toplanan logların anlamlandırılmış halini gösterir.
+Alanlar / Fields:
+Device Name: <DEVICE_A> (Örn: ISU00660)
+Event IDs: 7, 11, 51, 18, 4101
+Critical Descriptions: 7: Disk Error (Bad Block) | 11: Controller Error
+<img width="1365" height="784" alt="LAST_RREPOR" src="https://github.com/user-attachments/assets/e978263a-dece-4973-aef8-35cea855da0f" />
 
 💰 SIEM vs. This Solution
 Kurumsal SIEM çözümleri (Sentinel/Splunk vb.) log hacmine göre ücretlendirilir. Bu çözüm ise tamamen mevcut altyapıyı kullanarak ek maliyeti sıfıra indirir.
