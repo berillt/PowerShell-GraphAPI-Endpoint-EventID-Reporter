@@ -43,16 +43,6 @@ Admin Consent: Gerekli / Required
 
 <img width="1368" height="768" alt="API_permissions" src="https://github.com/user-attachments/assets/76e6bd28-4036-4ad5-aa4e-191f67b32fe2" />
 
-Yapılandırma Detayları / Configuration Details:
-
-Application Name: GenericEventLogMailApp (Örn: EventLogMail)
-
-API / Permission Name: Mail.Send
-
-Type: Application
-
-Admin Consent Status: Granted for <YOUR_ORGANIZATION> (Örn: Granted for Anadolu Isuzu)
-
 
 
 ### 2. Ağ Paylaşımı & Klasör Yetkileri | Shared Folder & Permissions
