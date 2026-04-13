@@ -23,13 +23,13 @@ Tam Otomatik (Fully Automated): Manuel hiçbir müdahale gerektirmez. / Requires
 
 
 
-##Teknik Gereksinimler & Kurulum | Technical Prerequisites & Setup
+## Teknik Gereksinimler & Kurulum | Technical Prerequisites & Setup
 
 Bu proje üç ana bileşenin eşzamanlı çalışmasıyla kurgulanmıştır:
 
 This project is built on the simultaneous operation of three main components:
 
-###1. Azure App Registration (Microsoft Graph API)
+### 1. Azure App Registration (Microsoft Graph API)
    
 Mail gönderimi için Azure üzerinde bir uygulama kaydı oluşturulmalı ve şu yetkiler tanımlanmalıdır:
 
@@ -55,7 +55,7 @@ Admin Consent Status: Granted for <YOUR_ORGANIZATION> (Örn: Granted for Anadolu
 
 
 
-###2. Ağ Paylaşımı & Klasör Yetkileri | Shared Folder & Permissions
+### 2. Ağ Paylaşımı & Klasör Yetkileri | Shared Folder & Permissions
    
 İstemci tarafındaki scriptin verileri bırakabilmesi için bir dosya sunucusu alanı gereklidir:
 
@@ -85,7 +85,7 @@ Permission: Modify, Read & Execute, List folder contents, Read, Write (Allow)
 
 
 
-###3. Görev Zamanlayıcı Yapılandırması | Task Scheduler Configuration
+### 3. Görev Zamanlayıcı Yapılandırması | Task Scheduler Configuration
    
 Raporun otomatize edilmesi için merkezi sunucuda bir görev tanımlanmalıdır:
 
@@ -120,7 +120,7 @@ Add arguments: -ExecutionPolicy Bypass -File "C:\<PATH_TO_SCRIPT>\Central-Server
 Start in: C:\CentralEventReport
 
 
-###4. Intune Remediation Yapılandırması | Intune Remediation Configuration
+### 4. Intune Remediation Yapılandırması | Intune Remediation Configuration
 
 <img width="1234" height="848" alt="ıNTUNE" src="https://github.com/user-attachments/assets/d0179682-aaae-44c7-bcd6-446dddb84b5b" />
 
@@ -137,7 +137,7 @@ Run credentials: No (SYSTEM yetkisi için).
 
 
 
-###Örnek Rapor Çıktısı | Sample Report Output
+### Örnek Rapor Çıktısı | Sample Report Output
 
 Sistem başarıyla çalıştığında, yöneticilere ulaşan mail ve ekindeki analiz raporu şu şekilde görünmektedir:
 
@@ -173,7 +173,7 @@ Critical Descriptions: 7: Disk Error (Bad Block) | 11: Controller Error
 
 <img width="1365" height="784" alt="LAST_RREPOR" src="https://github.com/user-attachments/assets/e978263a-dece-4973-aef8-35cea855da0f" />
 
-###SIEM vs. This Solution
+### SIEM vs. This Solution
 
 Kurumsal SIEM çözümleri (Sentinel/Splunk vb.) log hacmine göre ücretlendirilir. Bu çözüm ise tamamen mevcut altyapıyı kullanarak ek maliyeti sıfıra indirir.
 
