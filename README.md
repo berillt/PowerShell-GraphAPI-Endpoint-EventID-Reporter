@@ -1,4 +1,4 @@
-#Enterprise Endpoint Event Reporter | Kurumsal Endpoint Olay Raporlayıcı
+#Enterprise Endpoint Event Reporter | Kurumsal Endpoint Olay Raporlayıcı#
 
 
 
