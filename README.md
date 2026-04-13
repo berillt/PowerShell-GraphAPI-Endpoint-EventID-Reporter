@@ -85,7 +85,7 @@ Start in: C:\<WORKING_DIRECTORY>
 
 ### 4. Intune Remediation Yapılandırması | Intune Remediation Configuration
 
-<img width="1234" height="848" alt="ıNTUNE" src="https://github.com/user-attachments/assets/d0179682-aaae-44c7-bcd6-446dddb84b5b" />
+<img width="1235" height="848" alt="intune2" src="https://github.com/user-attachments/assets/d86849b0-24e2-4192-ac70-1b8db0404333" />
 
 
 Yapılandırma Detayları / Configuration Details:
