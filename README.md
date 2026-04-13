@@ -2,9 +2,11 @@ Enterprise Endpoint Event Reporter | Kurumsal Endpoint Olay Raporlayıcı
 
 
 
-Bu proje, kurumsal ağdaki cihazlardan gelen karmaşık olay loglarını toplar, kritik hataları analiz eder ve Microsoft Graph API kullanarak yönetici ekibine temiz, anlamlandırılmış bir özet rapor sunar.
+[TR] Bu proje, kurumsal ağdaki cihazlardan gelen karmaşık olay loglarını toplar, kritik hataları analiz eder ve Microsoft Graph API kullanarak yönetici ekibine temiz, anlamlandırılmış bir özet rapor sunar.
 
-This project collects complex event logs from corporate devices, analyzes critical errors, and delivers a clean, meaningful summary report to the IT administration using Microsoft Graph API.
+[EN] This project collects complex event logs from corporate devices, analyzes critical errors, and delivers a clean, meaningful summary report to the IT administration using Microsoft Graph API.
+
+
 
 Neden Bu Proje? | Why This Project?
 
