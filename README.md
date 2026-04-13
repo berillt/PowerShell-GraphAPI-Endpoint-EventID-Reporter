@@ -16,7 +16,8 @@ Gürültü Kirliliği Yok (Noise Reduction): Binlerce satır yerine sadece kriti
 
 Tam Otomatik (Fully Automated): Manuel hiçbir müdahale gerektirmez. / Requires no manual intervention.
 
-<img width="1365" height="784" alt="Akıs" src="https://github.com/user-attachments/assets/07512254-623b-4ee3-8b9b-3d759ab46b89" />
+<img width="1365" height="784" alt="Akis1" src="https://github.com/user-attachments/assets/306d23d1-82f8-4ac8-a4ff-0d5d4600b68a" />
+
 
 
 
