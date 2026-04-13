@@ -90,11 +90,9 @@ Start in: C:\<WORKING_DIRECTORY>
 
 Yapılandırma Detayları / Configuration Details:
 
-Detection Script: Intune'un her zaman düzeltme (remediation) aşamasına geçmesini sağlayan exit 1 mantığını içerir.
+Detection Script: Intune'un her zaman düzeltme (remediation) aşamasına geçmesini sağlayan exit 1 mantığını içerir. / Used to force Intune to report an "Issue found" status, ensuring the Remediation script runs in every cycle.
 
-Remediation Script: Logları süzen ve ağ paylaşımına (\\<SERVER_IP>\Share$) gönderen ana scripttir.
-
-Run credentials: No (SYSTEM yetkisi için).
+Run credentials: No 
 
 64-bit PowerShell: Yes.
 
