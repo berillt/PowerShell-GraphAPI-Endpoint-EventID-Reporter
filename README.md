@@ -1,4 +1,4 @@
-#Enterprise# Endpoint Event Reporter | Kurumsal Endpoint Olay Raporlayıcı
+# Enterprise Endpoint Event Reporter | Kurumsal Endpoint Olay Raporlayıcı
 
 
 
@@ -8,7 +8,7 @@
 
 
 
-##Neden Bu Proje? | Why This Project?
+## Neden Bu Proje? | Why This Project?
 
 Sıfır Maliyet (Zero Cost): Azure Sentinel veya Log Analytics gibi ücretli servisler yerine mevcut Microsoft 365 lisanslarını kullanır. / Utilizes existing Microsoft 365 licenses instead of paid services like Azure Sentinel or Log Analytics.
 
