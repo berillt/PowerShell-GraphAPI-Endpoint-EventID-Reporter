@@ -1,1 +1,73 @@
+Intune Yapılandırması | Intune Configuration
+Bu çözüm, cihazlardan veri toplamak için Intune Proactive Remediations (veya Settings Catalog altındaki Scripts) özelliğini kullanır. Scriptlerin periyodik olarak (Örn: Her 1 saatte bir) çalışması için "Detection" scripti her zaman hata verecek şekilde kurgulanmıştır.
 
+1. Detection Script
+Intune'un her zaman "Issue found" (Sorun bulundu) demesini ve ardından Remediation scriptini çalıştırmasını sağlamak için kullanılır.
+
+PowerShell
+# Intune'un her zaman Remediation scriptini calistirmasini saglamak icin exit 1 ile cikiyoruz.
+# Force Intune to run the Remediation script by exiting with code 1.
+Write-Output "Periyodik Event Log kontrolü baslatiliyor..."
+exit 1
+
+
+2. Remediation Script (Log Toplayıcı)
+Bu script, cihaz üzerindeki kritik sistem olaylarını süzer, yerel bir CSV oluşturur ve ağ paylaşılan klasörüne kopyalar.
+
+PowerShell
+# =====================================================
+# AYARLAR | SETTINGS
+# =====================================================
+$NetworkPath = "\\<YOUR_SERVER_IP_OR_NAME>\<SHARE_NAME>$"
+$Computer    = $env:COMPUTERNAME
+$LocalPath   = "C:\Windows\Temp\Events_$Computer.csv"
+
+# Takip edilecek kritik Event ID listesi
+# List of critical Event IDs to monitor
+$EventIDs = @(7,11,51,18,47,4101,14,219,225)
+
+Write-Output "Islem basladi: $Computer"
+
+# Sunucu erisilebilirlik kontrolü | Server connectivity check
+if (-not (Test-Connection -ComputerName "<YOUR_SERVER_IP_OR_NAME>" -Count 1 -Quiet)) {
+    Write-Output "HATA: Sunucuya ulasilamiyor (Ping Fail)."
+    exit 1
+}
+
+# =====================================================
+# LOG TOPLAMA | LOG COLLECTION
+# =====================================================
+try {
+    $StartTime = (Get-Date).AddDays(-2)
+    $AllEvents = Get-EventLog -LogName System -After $StartTime -InstanceId $EventIDs -ErrorAction SilentlyContinue
+
+    if ($AllEvents) {
+        $AllEvents | Select-Object TimeGenerated, EventID, EntryType, Message | Export-Csv -Path $LocalPath -NoTypeInformation -Encoding UTF8 -Delimiter ";"
+        Write-Output "BILGI: $(($AllEvents).Count) adet log yerel dosyaya yazildi."
+    } else {
+        Write-Output "BILGI: Son 2 gunde kritik log bulunmadi."
+        exit 0
+    }
+} catch {
+    Write-Output "HATA (Log Toplama): $($_.Exception.Message)"
+    exit 1
+}
+
+# =====================================================
+# KOPYALAMA | COPY TO SHARE
+# =====================================================
+if (Test-Path $LocalPath) {
+    try {
+        Copy-Item -Path $LocalPath -Destination "$NetworkPath\" -Force -ErrorAction Stop
+        Write-Output "BASARILI: $Computer dosyasi sunucuya kopyalandi."
+        Remove-Item $LocalPath -Force 
+    } catch {
+        Write-Output "HATA (Kopyalama): $($_.Exception.Message)"
+    }
+}
+Önemli Yapılandırma Notları:
+Run this script using the logged-on credentials: No (Script SYSTEM haklarıyla çalışmalıdır).
+
+Run script in 64-bit PowerShell: Yes.
+
+Schedule: Görsellerine göre bu görev günlük olarak tetikleniyor ve saat başı tekrar ediyor.
