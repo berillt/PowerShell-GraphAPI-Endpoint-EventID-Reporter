@@ -104,35 +104,8 @@ Sistem başarıyla çalıştığında, yöneticilere ulaşan mail ve ekindeki an
 
 Mail Özeti / Email Summary:
 
-Konu / Subject: Client Device Critical Event Report - 1
-
-Kimden / From: <REPORTS_SENDER_MAIL> (Örn: reports@isuzu.com.tr)
-
-Kime / To: <RECIPIENT_1>; <RECIPIENT_2>; <RECIPIENT_3>
-
-Gönderi İçeriği / Body:
-
-Plaintext
-
-Device-based critical event analysis report is attached.
-
-Total Device Count: 2
-
-Ek / Attachment: Generic_Event_Analysis.zip [512 bytes]
-
-ZIP İçeriği (CSV) / ZIP Content (CSV):
-
-Görselin Sağ Tarafı / Right Side of Image: MergedEvents.csv dosyası, toplanan logların anlamlandırılmış halini gösterir.
-
-Alanlar / Fields:
-
-Device Name: <DEVICE_A> (Örn: ISU00660)
-
-Event IDs: 7, 11, 51, 18, 4101
-
-Critical Descriptions: 7: Disk Error (Bad Block) | 11: Controller Error
-
 <img width="1365" height="784" alt="LAST_RREPOR" src="https://github.com/user-attachments/assets/e978263a-dece-4973-aef8-35cea855da0f" />
+
 
 ### SIEM vs. This Solution
 
