@@ -59,20 +59,6 @@ Security (NTFS) Permissions: Domain Computers grubu için Modify, Read & Execute
 
 <img width="955" height="1120" alt="shared_folder" src="https://github.com/user-attachments/assets/c6b6da30-0686-487f-b935-b8239b67cf26" />
 
-Yapılandırma Detayları / Configuration Details:
-
-1. Share Permissions (Sol Sekme) / Left Tab:
-
-Group/User: Everyone
-
-Permission: Full Control (Allow)
-
-2. Security (NTFS) Permissions (Sağ Sekme) / Right Tab:
-
-Group/User: <YOUR_DOMAIN>\Domain Computers
-
-Permission: Modify, Read & Execute, List folder contents, Read, Write (Allow)
-
 
 
 ### 3. Görev Zamanlayıcı Yapılandırması | Task Scheduler Configuration
@@ -95,19 +81,6 @@ Start in: C:\<WORKING_DIRECTORY>
 <img width="1078" height="976" alt="task_scheduler" src="https://github.com/user-attachments/assets/fb70df54-73ba-4ce8-b982-4608412fd52d" />
 
 
-Yapılandırma Detayları / Configuration Details:
-
-Task Name: Generic_Event_Log_Reporter
-
-Trigger (Tetikleyici): Daily (Günlük), Belirlenen saatte (Örn: 17:00 / 5:00 PM)
-
-Action (Eylem): Start a program
-
-Program/script: powershell.exe
-
-Add arguments: -ExecutionPolicy Bypass -File "C:\<PATH_TO_SCRIPT>\Central-Server-Script.ps1"
-
-Start in: C:\CentralEventReport
 
 
 ### 4. Intune Remediation Yapılandırması | Intune Remediation Configuration
