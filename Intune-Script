@@ -1,20 +1,24 @@
 Intune Yapılandırması | Intune Configuration
-Bu çözüm, cihazlardan veri toplamak için Intune Proactive Remediations (veya Settings Catalog altındaki Scripts) özelliğini kullanır. Scriptlerin periyodik olarak (Örn: Her 1 saatte bir) çalışması için "Detection" scripti her zaman hata verecek şekilde kurgulanmıştır.
+Bu çözüm, cihazlardan veri toplamak için Intune Proactive Remediations özelliğini kullanır. Scriptlerin periyodik olarak çalışması ve her seferinde tetiklenmesi için özel bir mantık kurgulanmıştır.
+This solution utilizes the Intune Proactive Remediations feature. A specific logic is implemented to ensure the scripts run periodically and trigger every time.
 
 1. Detection Script
-Intune'un her zaman "Issue found" (Sorun bulundu) demesini ve ardından Remediation scriptini çalıştırmasını sağlamak için kullanılır.
+Intune'un her zaman "Issue found" (Sorun bulundu) statüsü dönmesini ve dolayısıyla Remediation scriptini her döngüde çalıştırmasını sağlamak için kullanılır.
+Used to force Intune to report an "Issue found" status, ensuring the Remediation script runs in every cycle.
 
 PowerShell
 # Intune'un her zaman Remediation scriptini calistirmasini saglamak icin exit 1 ile cikiyoruz.
 # Force Intune to run the Remediation script by exiting with code 1.
-Write-Output "Periyodik Event Log kontrolü baslatiliyor..."
+
+Write-Output "Periyodik Event Log..."
 exit 1
 
 
-2. Remediation Script (Log Toplayıcı)
-Bu script, cihaz üzerindeki kritik sistem olaylarını süzer, yerel bir CSV oluşturur ve ağ paylaşılan klasörüne kopyalar.
 
-PowerShell
+2. Remediation Script (Log Toplayıcı | Log Collector)
+Bu script, cihaz üzerindeki kritik sistem olaylarını süzer, yerel bir CSV oluşturur ve ağ paylaşılan klasörüne kopyalar.
+This script filters critical system events, creates a local CSV, and copies it to the network shared folder.
+
 # =====================================================
 # AYARLAR | SETTINGS
 # =====================================================
@@ -22,15 +26,15 @@ $NetworkPath = "\\<YOUR_SERVER_IP_OR_NAME>\<SHARE_NAME>$"
 $Computer    = $env:COMPUTERNAME
 $LocalPath   = "C:\Windows\Temp\Events_$Computer.csv"
 
-# Takip edilecek kritik Event ID listesi
-# List of critical Event IDs to monitor
+# Takip edilecek kritik Event ID listesi (Ihtiyaca gore genisletilebilir)
+# List of critical Event IDs to monitor (Can be expanded as needed)
 $EventIDs = @(7,11,51,18,47,4101,14,219,225)
 
-Write-Output "Islem basladi: $Computer"
+Write-Output "Islem basladi | Process started: $Computer"
 
 # Sunucu erisilebilirlik kontrolü | Server connectivity check
 if (-not (Test-Connection -ComputerName "<YOUR_SERVER_IP_OR_NAME>" -Count 1 -Quiet)) {
-    Write-Output "HATA: Sunucuya ulasilamiyor (Ping Fail)."
+    Write-Output "HATA: Sunucuya ulasilamiyor (Ping Fail). | ERROR: Server unreachable (Ping Fail)."
     exit 1
 }
 
@@ -38,18 +42,19 @@ if (-not (Test-Connection -ComputerName "<YOUR_SERVER_IP_OR_NAME>" -Count 1 -Qui
 # LOG TOPLAMA | LOG COLLECTION
 # =====================================================
 try {
+    # Son 2 günlük logları toplar | Collects logs from the last 2 days
     $StartTime = (Get-Date).AddDays(-2)
     $AllEvents = Get-EventLog -LogName System -After $StartTime -InstanceId $EventIDs -ErrorAction SilentlyContinue
 
     if ($AllEvents) {
         $AllEvents | Select-Object TimeGenerated, EventID, EntryType, Message | Export-Csv -Path $LocalPath -NoTypeInformation -Encoding UTF8 -Delimiter ";"
-        Write-Output "BILGI: $(($AllEvents).Count) adet log yerel dosyaya yazildi."
+        Write-Output "BILGI: $(($AllEvents).Count) adet log yerel dosyaya yazildi. | INFO: $(($AllEvents).Count) logs written to local file."
     } else {
-        Write-Output "BILGI: Son 2 gunde kritik log bulunmadi."
+        Write-Output "BILGI: Son 2 gunde kritik log bulunmadi. | INFO: No critical logs found in the last 2 days."
         exit 0
     }
 } catch {
-    Write-Output "HATA (Log Toplama): $($_.Exception.Message)"
+    Write-Output "HATA (Log Toplama): $($_.Exception.Message) | ERROR (Log Collection): $($_.Exception.Message)"
     exit 1
 }
 
@@ -58,16 +63,36 @@ try {
 # =====================================================
 if (Test-Path $LocalPath) {
     try {
+        # Dosyayi merkezi paylasima kopyalar | Copies the file to central share
         Copy-Item -Path $LocalPath -Destination "$NetworkPath\" -Force -ErrorAction Stop
-        Write-Output "BASARILI: $Computer dosyasi sunucuya kopyalandi."
+        Write-Output "BASARILI: $Computer dosyasi sunucuya kopyalandi. | SUCCESS: $Computer file copied to server."
         Remove-Item $LocalPath -Force 
     } catch {
-        Write-Output "HATA (Kopyalama): $($_.Exception.Message)"
+        Write-Output "HATA (Kopyalama): $($_.Exception.Message) | ERROR (Copying): $($_.Exception.Message)"
     }
 }
-Önemli Yapılandırma Notları:
-Run this script using the logged-on credentials: No (Script SYSTEM haklarıyla çalışmalıdır).
 
-Run script in 64-bit PowerShell: Yes.
 
-Schedule: Görsellerine göre bu görev günlük olarak tetikleniyor ve saat başı tekrar ediyor.
+
+
+
+Kritik Yapılandırma Detayları | Critical Configuration Details
+Intune üzerinde script paketini oluştururken aşağıdaki ayarların yapılması zorunludur:
+The following settings are mandatory when creating the script package on Intune:
+
+Run this script using the logged-on credentials: No
+
+Neden?: Scriptin ağ paylaşımına erişebilmesi ve kısıtlı sistem loglarını okuyabilmesi için yüksek yetkili SYSTEM hesabı ile çalışması gerekir. 
+Why?: The script must run under the high-privilege SYSTEM account to access the network share and read restricted system logs.
+
+Enforce script signature check: No
+
+Run script in 64-bit PowerShell: Yes
+
+Neden?: Modern Windows sistem loglarına tam erişim ve performans için 64-bit mimarisi gereklidir. 
+Why?: 64-bit architecture is required for performance and full access to modern Windows system logs.
+
+Schedule (Zamanlama):
+
+Bu görev günlük (Daily) olarak tetiklenecek şekilde ayarlanmış olup, gün içinde her 1 saatte bir (veya ihtiyacınıza göre) süresiz tekrar edecek şekilde yapılandırılmalıdır. 
+This task is set to trigger daily and should be configured to repeat every 1 hour (or as per your needs) indefinitely.
