@@ -19,6 +19,9 @@ Tam Otomatik (Fully Automated): Manuel hiçbir müdahale gerektirmez. / Requires
 <img width="1365" height="784" alt="Akıs" src="https://github.com/user-attachments/assets/07512254-623b-4ee3-8b9b-3d759ab46b89" />
 
 
+
+
+
 Teknik Gereksinimler & Kurulum | Technical Prerequisites & Setup
 
 Bu proje üç ana bileşenin eşzamanlı çalışmasıyla kurgulanmıştır:
@@ -26,7 +29,7 @@ Bu proje üç ana bileşenin eşzamanlı çalışmasıyla kurgulanmıştır:
 This project is built on the simultaneous operation of three main components:
 
 1. Azure App Registration (Microsoft Graph API)
-2. 
+   
 Mail gönderimi için Azure üzerinde bir uygulama kaydı oluşturulmalı ve şu yetkiler tanımlanmalıdır:
 
 An application registration must be created on Azure for email delivery with the following permissions:
@@ -52,7 +55,7 @@ Admin Consent Status: Granted for <YOUR_ORGANIZATION> (Örn: Granted for Anadolu
 
 
 2. Ağ Paylaşımı & Klasör Yetkileri | Shared Folder & Permissions
-3. 
+   
 İstemci tarafındaki scriptin verileri bırakabilmesi için bir dosya sunucusu alanı gereklidir:
 
 A file server area is required for the client-side script to drop data:
@@ -82,7 +85,7 @@ Permission: Modify, Read & Execute, List folder contents, Read, Write (Allow)
 
 
 3. Görev Zamanlayıcı Yapılandırması | Task Scheduler Configuration
-4. 
+   
 Raporun otomatize edilmesi için merkezi sunucuda bir görev tanımlanmalıdır:
 
 A scheduled task must be defined on the central server to automate the report:
