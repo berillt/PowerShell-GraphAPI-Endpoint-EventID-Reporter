@@ -1,4 +1,4 @@
-<img width="1408" height="768" alt="SCCM Compliance Setup" src="https://github.com/user-attachments/assets/5a8904c5-1a7f-46d3-a215-f12b8950ac22" /># Enterprise Endpoint Event Reporter & Compliance Framework 
+
 ### Kurumsal Endpoint Olay Raporlayıcı ve Uyumluluk Çerçevesi
 
 [TR] Bu proje, kurumsal ağdaki Windows istemcilerden gelen karmaşık olay günlüklerini (Event Logs) toplar, kritik donanım/sistem hatalarını analiz eder ve Microsoft Graph API ile MECM/SCCM Baseline mimarilerini kullanarak yönetim ekiplerine anlamlandırılmış raporlar sunar.
