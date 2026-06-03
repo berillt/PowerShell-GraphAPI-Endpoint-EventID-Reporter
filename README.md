@@ -86,7 +86,7 @@
 [TR] MECM/SCCM donanım envanteri (WMI) ve SQL veritabanı entegrasyonu üzerinden toplanan veriler, Power BI üzerinde kurulan veri modeliyle dinamik olarak filtrelenir. Aşağıdaki tabloda, istemcilerden toplanan spesifik kritik olay kimliklerinin (Event ID) ve hata detaylarının anlık olarak nasıl raporlandığı gösterilmektedir.
 [EN] Data collected via MECM/SCCM hardware inventory (WMI) and SQL database integration is dynamically filtered through the Power BI data model. The table below demonstrates how specific critical event IDs and failure details captured from endpoints are monitored in real-time.
 
-<img width="1408" height="768" alt="Power BI Filtered Critical Events Table" src="https://github.com/user-attachments/assets/0b1428d4-45bd-4867-832e-0bf633e5be73" />
+<img width="1252" height="640" alt="Power BI Filtered Critical Events Table" src="https://github.com/user-attachments/assets/a71d6714-7997-4d0e-b6fc-878a1ca01a04" />
 
 ---
 
