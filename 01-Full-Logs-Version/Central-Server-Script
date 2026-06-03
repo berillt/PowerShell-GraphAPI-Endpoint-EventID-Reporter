@@ -1,34 +1,32 @@
-Merkezi Sunucu Yapılandırması | Central Server Configuration
-Bu script, ağ üzerindeki paylaşılan klasörden verileri toplar, analiz eder ve Microsoft Graph API kullanarak yönetici ekibine raporlar.
-This script collects data from the network share, analyzes it, and reports it to the IT administration using Microsoft Graph API.
+# ==============================================================================
+# [TR] CENTRAL SERVER SCRIPT: Ortak klasördeki CSV'leri toplar, cihaz bazlı gruplar,
+#      anlamlandırılmış sözlük yapısıyla eşleştirip Graph API üzerinden mail atar.
+# [EN] CENTRAL SERVER SCRIPT: Collects CSVs from share, groups them by device,
+#      maps with description dictionary, and sends mail via Graph API.
+# ==============================================================================
 
-Central-Server-Script.ps1
-Bu script, sunucu tarafında her akşam belirlenen saatte (Örn: 18:00) çalışacak şekilde Task Scheduler üzerinden tetiklenir.
-This script is triggered via Task Scheduler on the server side at a set time (e.g., 6:00 PM).
-
-PowerShell
 # =====================================================
 # 1. AYARLAR | SETTINGS
 # =====================================================
-# Azure App Registration Bilgileri | Azure App Registration Credentials
+# [TR] Azure App Registration Bilgileri | [EN] Azure App Registration Credentials
 $TenantId     = "<YOUR_TENANT_ID>"
 $ClientId     = "<YOUR_CLIENT_ID>"
 $ClientSecret = "<YOUR_CLIENT_SECRET>"
 
-# Mail Ayarlari | Mail Settings
-$MailFrom = "<REPORTS_SENDER_MAIL>"
-$MailTo   = @("<RECIPIENT_1>", "<RECIPIENT_2>") 
+# [TR] Mail Ayarlari | [EN] Mail Settings
+$MailFrom = "<REPORTS_SENDER_MAIL@YOUR_DOMAIN.com>"
+$MailTo   = @("<RECIPIENT_1@YOUR_DOMAIN.com>", "<RECIPIENT_2@YOUR_DOMAIN.com>") 
 
-# Yol Tanimlari | Path Definitions
-$SharePath   = "\\<YOUR_SERVER>\<SHARE_NAME>$"
+# [TR] Yol Tanimlari | [EN] Path Definitions
+$SharePath   = "\\<YOUR_SERVER_IP_OR_NAME>\<SHARE_NAME>$"
 $WorkingPath = "C:\CentralEventReport"
 $FinalCsv    = "$WorkingPath\MergedEvents.csv"
 $ZipPath     = "$WorkingPath\MergedEvents.zip"
 
-$MinutesBack = 4320 # Son 3 gunu tara | Scan last 3 days
+$MinutesBack = 4320 # [TR] Son 3 gunu tara | [EN] Scan last 3 days
 
-# Olay Aciklamalari (Ihtiyaca gore guncellenebilir) 
-# Event Descriptions (Can be updated as needed)
+# [TR] Olay Aciklamalari Sözlüğü
+# [EN] Event Descriptions Dictionary
 $EventDescriptions = @{
     "7"    = "Disk Hatasi (Bad Block) | Disk Error"
     "11"   = "Surucu Denetleyici Hatasi | Controller Error"
@@ -58,7 +56,8 @@ $RawData = New-Object System.Collections.Generic.List[PSObject]
 
 foreach ($File in $CsvFiles) {
     try {
-        # CSV temizleme ve veri okuma | CSV cleaning and data reading
+        # [TR] CSV temizleme ve veri okuma
+        # [EN] CSV cleaning and data reading
         $CleanLines = Get-Content $File.FullName | Where-Object { $_ -match '^"' }
         if ($CleanLines) {
             $Data = $CleanLines | ConvertFrom-Csv -Delimiter ";" 
@@ -70,10 +69,12 @@ foreach ($File in $CsvFiles) {
                 }
             }
         }
-    } catch { }
+    } catch {
+        Write-Host "HATA ($($File.Name)): $($_.Exception.Message)"
+    }
 }
 
-# Veriyi Cihaz Bazli Grupla | Group Data by Device Name
+# [TR] Veriyi Cihaz Bazli Grupla | [EN] Group Data by Device Name
 $GroupedData = $RawData | Group-Object DeviceName | ForEach-Object {
     $UniqueIDs = $_.Group.EventID | Select-Object -Unique
     
@@ -84,13 +85,14 @@ $GroupedData = $RawData | Group-Object DeviceName | ForEach-Object {
     }
 
     [PSCustomObject]@{
-        "Device Name"       = $_.Name
-        "Event IDs"         = $UniqueIDs -join ", "
+        "Device Name"           = $_.Name
+        "Event IDs"             = $UniqueIDs -join ", "
         "Critical Descriptions" = $DescList -join " | "
     }
 }
 
-# Raporu disari aktar ve sikistir | Export and compress the report
+# [TR] Raporu disari aktar ve sikistir
+# [EN] Export and compress the report
 $GroupedData | Export-Csv -Path $FinalCsv -NoTypeInformation -Encoding UTF8 -Delimiter ","
 if (Test-Path $ZipPath) { Remove-Item $ZipPath -Force }
 Compress-Archive -Path $FinalCsv -DestinationPath $ZipPath
@@ -99,7 +101,7 @@ Compress-Archive -Path $FinalCsv -DestinationPath $ZipPath
 # 3. GRAPH API ILE MAIL VE TEMIZLIK | MAIL VIA GRAPH API & CLEANUP
 # =====================================================
 try {
-    # Token Alimi | Get OAuth Token
+    # [TR] Token Alimi | [EN] Get OAuth Token
     $TokenUrl = "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token"
     $TokenBody = @{ grant_type = "client_credentials"; client_id = $ClientId; client_secret = $ClientSecret; scope = "https://graph.microsoft.com/.default" }
     $TokenResponse = Invoke-RestMethod -Method Post -Uri $TokenUrl -Body $TokenBody
@@ -113,17 +115,21 @@ try {
             subject = "Client Critical Event Analysis Report - $(Get-Date -Format 'dd.MM.yyyy')"
             body = @{ 
                 contentType = "HTML"
-                content = "<html><body><p>Device-based critical event analysis report is attached.</p><p><b>Total Devices Count:</b> $($GroupedData.Count)</p></body></html>" 
+                content = "<html><body>
+                           <h2>Kurumsal Endpoint Olay Raporu / Enterprise Endpoint Event Report</h2>
+                           <p>Device-based critical event analysis report is attached.</p>
+                           <p><b>Total Devices Count:</b> $($GroupedData.Count)</p>
+                           </body></html>" 
             }
             toRecipients = $RecipientList
             attachments = @(@{ "@odata.type" = "#microsoft.graph.fileAttachment"; name = "Critical_Event_Analysis.zip"; contentBytes = $AttachmentBase64 })
         }
     } | ConvertTo-Json -Depth 10 -Compress
 
-    # Mail Gonder | Send Mail
+    # [TR] Mail Gonder | [EN] Send Mail
     Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/v1.0/users/$MailFrom/sendMail" -Headers $Headers -Body $MailJson
     
-    # --- TEMIZLIK (YEREL + PAYLASIM) | CLEANUP (LOCAL + SHARE) ---
+    # [TR] TEMIZLIK (YEREL + PAYLASIM) | [EN] CLEANUP (LOCAL + SHARE)
     if (Test-Path $FinalCsv) { Remove-Item $FinalCsv -Force }
     if (Test-Path $ZipPath) { Remove-Item $ZipPath -Force }
     foreach ($File in $CsvFiles) { 
@@ -133,20 +139,3 @@ try {
 } catch { 
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red 
 }
-
-
-
-
-
-
-Teknik Detaylar | Technical Details
-Neden Microsoft Graph API?: Geleneksel SMTP yöntemlerine göre daha güvenlidir, Modern Authentication (OAuth 2.0) destekler ve Exchange Online kısıtlamalarına takılmaz. 
-Why Microsoft Graph API?:It is more secure than traditional SMTP, supports Modern Authentication (OAuth 2.0), and is not affected by Exchange Online limitations.
-
-Otomatik Temizlik: Script başarıyla çalıştıktan sonra paylaşılan klasördeki CSV dosyalarını otomatik olarak siler. Bu sayede disk doluluğu ve veri karmaşası önlenir. 
-Automated Cleanup: Automatically deletes CSV files in the shared folder after a successful run to prevent disk bloat and data clutter.
-
-Hata Giderme (Escape Characters): Değişken tanımlamalarında ${id} kullanımı tercih edilerek PowerShell'in sürücü (Drive) belirteci hataları önlenmiştir.
-Troubleshooting: The use of ${id} prevents PowerShell from misinterpreting the colon as a drive provider.
-
-
