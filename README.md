@@ -1,4 +1,4 @@
-# Enterprise Endpoint Event Reporter & Compliance Framework 
+<img width="1408" height="768" alt="SCCM Compliance Setup" src="https://github.com/user-attachments/assets/5a8904c5-1a7f-46d3-a215-f12b8950ac22" /># Enterprise Endpoint Event Reporter & Compliance Framework 
 ### Kurumsal Endpoint Olay Raporlayıcı ve Uyumluluk Çerçevesi
 
 [TR] Bu proje, kurumsal ağdaki Windows istemcilerden gelen karmaşık olay günlüklerini (Event Logs) toplar, kritik donanım/sistem hatalarını analiz eder ve Microsoft Graph API ile MECM/SCCM Baseline mimarilerini kullanarak yönetim ekiplerine anlamlandırılmış raporlar sunar.
@@ -69,7 +69,8 @@
 * **Configuration Item (CI) Type:** Windows PowerShell Discovery Script
 * **Compliance Rule Condition:** Output `Equals` -> `Temiz`
 
-<img width="1235" height="848" alt="SCCM Compliance Setup" src="https://github.com/user-attachments/assets/68218e81-2119-48e1-956b-db8871040383" />
+<img width="1408" height="768" alt="SCCM Compliance Setup" src="https://github.com/user-attachments/assets/1d102a49-fd81-468a-891d-f9116047a564" />
+
 
 ---
 
@@ -80,6 +81,12 @@
 [EN] When the system runs successfully, the summary email and its compressed (.zip) analysis report are automatically delivered to the administrators.
 
 <img width="1365" height="784" alt="LAST_RREPOR" src="https://github.com/user-attachments/assets/e978263a-dece-4973-aef8-35cea855da0f" />
+
+### 📊 Power BI Dashboard Event Log Analizi (Version 03)
+[TR] MECM/SCCM donanım envanteri (WMI) ve SQL veritabanı entegrasyonu üzerinden toplanan veriler, Power BI üzerinde kurulan veri modeliyle dinamik olarak filtrelenir. Aşağıdaki tabloda, istemcilerden toplanan spesifik kritik olay kimliklerinin (Event ID) ve hata detaylarının anlık olarak nasıl raporlandığı gösterilmektedir.
+[EN] Data collected via MECM/SCCM hardware inventory (WMI) and SQL database integration is dynamically filtered through the Power BI data model. The table below demonstrates how specific critical event IDs and failure details captured from endpoints are monitored in real-time.
+
+<img width="1408" height="768" alt="Power BI Filtered Critical Events Table" src="https://github.com/user-attachments/assets/0b1428d4-45bd-4867-832e-0bf633e5be73" />
 
 ---
 
